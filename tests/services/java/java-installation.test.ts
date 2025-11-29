@@ -284,7 +284,7 @@ describe("Java Installation Service", () => {
         ]);
       } catch (error) {
         // This is expected
-        console.log("Download test error (expected):", error);
+        //  console.log("Download test error (expected):", error);
       }
 
       // The test passes if we get here - we're just testing the process

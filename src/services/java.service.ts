@@ -246,9 +246,10 @@ async function _decompressJavaRelease(
   filePath: string,
   unpackPath?: string,
 ): Promise<any> {
-  const result = await taskManager.unpack(filePath, {
+  const { promise } = taskManager.unpack(filePath, {
     destination: unpackPath,
   });
+  const result = await promise;
   return result;
 }
 async function _getInstallationsByPath(): Promise<any[]> {

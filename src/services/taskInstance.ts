@@ -38,8 +38,9 @@ function attachEventListeners() {
     taskManager.on(eventName, (task) => {
       const { payload, details, error, createdAt, updatedAt, ...showData } =
         task;
-
-      //console.log(`Event: ${eventName}`, task);
+      if (eventName !== "task:progress") {
+        console.log(`Event: ${eventName}`, task);
+      }
     });
   });
 }
