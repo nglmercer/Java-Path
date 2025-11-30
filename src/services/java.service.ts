@@ -7,6 +7,13 @@ import { defaultPaths } from "../config.js";
 import { taskManager } from "../services/taskInstance.js";
 import { FileUtils, asyncHandler } from "../utils/file.js";
 import { findJavaVersion, type InstalledJavaVersion } from "./installations.js";
+import type {
+  DownloadResult,
+  TaskOperation,
+  ITask,
+} from "../services/taskInstance.js";
+//export type OnCompleteCallback<T> = (result: T, task: ITask) => void;
+
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -227,8 +234,8 @@ async function filterReleases(
 async function _downloadJavaRelease(
   release: JavaRelease,
   fileName?: string,
-  onComplete?: (data: any) => void,
-): Promise<any> {
+  onComplete?: (data: DownloadResult) => any,
+): Promise<TaskOperation<DownloadResult>> {
   const response = await fetch(release.downloadUrl);
   if (!response.ok) {
     throw new Error(`Failed to download Java release: ${response.statusText}`);
