@@ -11,17 +11,17 @@ const ARCHFILE_NAME = (release: JavaRelease): string => {
 };
 async function getorinstallJava(version = 23) {
   const findResult = await findJavaVersion(defaultPaths.unpackPath, version);
-  const alljavaVersions = await JavaInfoService.getInstallableVersions();
-  const FindVersion = await JavaInfoService.filter(
-    alljavaVersions.data.releases,
-    Number(version),
-  );
-  if (!FindVersion.data) {
-    console.warn("No Java version found");
-    return { alljavaVersions, version };
-  }
-  const getFilename = ARCHFILE_NAME(FindVersion.data);
   if (!findResult) {
+    const alljavaVersions = await JavaInfoService.getInstallableVersions();
+    const FindVersion = await JavaInfoService.filter(
+      alljavaVersions.data.releases,
+      Number(version),
+    );
+    if (!FindVersion.data) {
+      console.warn("No Java version found");
+      return { alljavaVersions, version };
+    }
+    const getFilename = ARCHFILE_NAME(FindVersion.data);
     const downloadJava = await JavaInfoService.downloadJavaRelease(
       FindVersion.data,
       getFilename,
@@ -38,7 +38,7 @@ async function getorinstallJava(version = 23) {
     const newResult = await findJavaVersion(defaultPaths.unpackPath, version);
     return { findResult: newResult, downloadJava, alljavaVersions };
   }
-  return { findResult, alljavaVersions };
+  return { findResult };
 }
 getorinstallJava()
   .then((result) => {

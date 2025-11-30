@@ -19,6 +19,16 @@ bun install
 
 ## Usage
 
+### Building the Library
+
+To build the library for distribution:
+
+```bash
+bun run build
+```
+
+This will create a bundled version in the `dist` directory optimized for Node.js.
+
 ### Basic Usage
 
 ```typescript
@@ -59,6 +69,77 @@ defaultPaths.update({
 });
 ```
 
+### Installing Java
+
+The library provides utilities to automatically find or download and install Java versions. This is useful for applications that need to ensure a specific Java version is available.
+
+```typescript
+import { findJavaVersion } from "java-path";
+import { defaultPaths } from "java-path";
+import { JavaInfoService } from "java-path";
+import { taskManager } from "java-path";
+import path from "path";
+
+async function getOrInstallJava(version = 23) {
+  // First, check if the version is already installed
+  const findResult = await findJavaVersion(defaultPaths.unpackPath, version);
+  
+  if (!findResult) {
+    // Get all available Java versions
+    const allJavaVersions = await JavaInfoService.getInstallableVersions();
+    
+    // Find the specific version
+    const findVersion = await JavaInfoService.filter(
+      allJavaVersions.data.releases,
+      Number(version)
+    );
+    
+    if (!findVersion.data) {
+      console.warn("No Java version found");
+      return { allJavaVersions, version };
+    }
+    
+    // Download Java
+    const downloadJava = await JavaInfoService.downloadJavaRelease(
+      findVersion.data,
+      `java-${version}.zip`
+    );
+    
+    if (!downloadJava || !downloadJava.data) {
+      console.error("Failed to download Java");
+      return { allJavaVersions, version };
+    }
+    
+    // Wait for download to complete
+    await downloadJava.data.promise;
+    
+    // Unpack the downloaded Java
+    const { promise, taskId } = await taskManager.unpack(
+      path.join(defaultPaths.downloadPath, `java-${version}.zip`)
+    );
+    
+    await promise;
+    
+    // Verify the installation
+    const newResult = await findJavaVersion(defaultPaths.unpackPath, version);
+    return { findResult: newResult, downloadJava, allJavaVersions };
+  }
+  
+  return { findResult, allJavaVersions };
+}
+
+// Usage
+getOrInstallJava(21)
+  .then((result) => {
+    console.log("Installation result:", result);
+  })
+  .catch((error) => {
+    console.error("Installation error:", error);
+  });
+```
+
+You can find a complete example in `examples/install.ts`.
+
 ### CLI Commands
 
 ```bash
@@ -76,6 +157,9 @@ bun test --coverage
 
 # Build project
 bun run build
+
+# Run the install example
+bun run examples/install.ts
 ```
 
 ## API Documentation
@@ -298,6 +382,14 @@ if (isSuccess(response)) {
 
 For detailed API documentation, see [docs/api-reference.md](docs/api-reference.md).
 
+The documentation includes information about:
+- Environment Detection
+- Java Information & Installation
+- Task Management
+- File & Folder Utilities
+- Command Utilities
+- Validation Utilities
+
 ## Testing
 
 This project uses Bun's built-in test runner. Tests are organized in the `tests/` directory with the following structure:
@@ -355,6 +447,15 @@ const { taskId, promise } = taskManager.createBackup(sourceDir, {
 
 // To reset paths to defaults:
 // defaultPaths.reset();
+```
+
+### Example: Installing Java
+
+See the `examples/install.ts` file for a complete example of how to find or download and install a specific Java version:
+
+```bash
+# Run the install example
+bun run examples/install.ts
 ```
 
 When paths are updated using `defaultPaths.update()`, the TaskManager instance is automatically recreated with the new paths, ensuring all subsequent operations use the updated paths.

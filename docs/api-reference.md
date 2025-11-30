@@ -442,6 +442,134 @@ const validation = await FileUtils.checkFileValidity("/path/to/config.txt", {
 
 ---
 
+## Installing Java
+
+### Getting or Installing Java Versions
+
+The library provides utilities to automatically find or download and install Java versions. This is useful for applications that need to ensure a specific Java version is available.
+
+#### Example: Install Java Version
+
+```typescript
+import { findJavaVersion } from "java-path";
+import { defaultPaths } from "java-path";
+import { JavaInfoService } from "java-path";
+import { taskManager } from "java-path";
+import path from "path";
+
+// Helper function to generate archive filename
+const ARCHFILE_NAME = (release: JavaRelease): string => {
+  const { featureVersion, arch, os } = release;
+  return `${featureVersion}_${arch}_${os}.zip`;
+};
+
+async function getOrInstallJava(version = 23) {
+  // First, check if the version is already installed
+  const findResult = await findJavaVersion(defaultPaths.unpackPath, version);
+  
+  // Get all available Java versions
+  const allJavaVersions = await JavaInfoService.getInstallableVersions();
+  
+  // Find the specific version
+  const findVersion = await JavaInfoService.filter(
+    allJavaVersions.data.releases,
+    Number(version)
+  );
+  
+  if (!findVersion.data) {
+    console.warn("No Java version found");
+    return { allJavaVersions, version };
+  }
+  
+  // Generate the filename for the download
+  const getFilename = ARCHFILE_NAME(findVersion.data);
+  
+  // If not installed, download and install it
+  if (!findResult) {
+    // Download Java
+    const downloadJava = await JavaInfoService.downloadJavaRelease(
+      findVersion.data,
+      getFilename
+    );
+    
+    if (!downloadJava || !downloadJava.data) {
+      console.error("Failed to download Java");
+      return { allJavaVersions, version };
+    }
+    
+    // Wait for download to complete
+    await downloadJava.data.promise;
+    
+    // Unpack the downloaded Java
+    const { promise, taskId } = await taskManager.unpack(
+      path.join(defaultPaths.downloadPath, getFilename)
+    );
+    
+    await promise;
+    
+    // Verify the installation
+    const newResult = await findJavaVersion(defaultPaths.unpackPath, version);
+    return { findResult: newResult, downloadJava, allJavaVersions };
+  }
+  
+  return { findResult, allJavaVersions };
+}
+
+// Usage
+getOrInstallJava(21)
+  .then((result) => {
+    console.log("Installation result:", result);
+  })
+  .catch((error) => {
+    console.error("Installation error:", error);
+  });
+```
+
+#### Process Overview
+
+1. **Check for Existing Installation**: First, the function checks if the requested Java version is already installed using `findJavaVersion`.
+
+2. **Get Available Versions**: It fetches all available Java versions from the Adoptium API using `JavaInfoService.getInstallableVersions()`.
+
+3. **Filter for Specific Version**: It filters the available versions to find the exact version requested.
+
+4. **Download if Needed**: If the version isn't installed, it downloads the appropriate package using `JavaInfoService.downloadJavaRelease`.
+
+5. **Unpack the Download**: After downloading, it unpacks the Java distribution using `taskManager.unpack`.
+
+6. **Verify Installation**: Finally, it verifies that the installation was successful.
+
+#### Customization Options
+
+You can customize the installation process in several ways:
+
+```typescript
+// Customize paths before installation
+defaultPaths.update({
+  downloadPath: "/custom/downloads",
+  unpackPath: "/custom/unpacked"
+});
+
+// Monitor download progress
+const downloadJava = await JavaInfoService.downloadJavaRelease(
+  release,
+  filename,
+  (progress) => {
+    console.log(`Download progress: ${progress.percent}%`);
+  }
+);
+
+// Monitor unpack progress
+const { promise, taskId } = await taskManager.unpack(archivePath);
+taskManager.on("task:progress", (task) => {
+  if (task.id === taskId) {
+    console.log(`Unpack progress: ${task.progress}%`);
+  }
+});
+```
+
+---
+
 ## Folder Utilities
 
 ### `FolderUtils`

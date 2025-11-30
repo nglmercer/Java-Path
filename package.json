@@ -1,17 +1,32 @@
 {
   "name": "java-path",
-  "module": "index.ts",
+  "version": "1.0.0",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
-  "private": true,
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "test": "bun test --timeout 30000",
     "dev": "bun --hot src/index.ts",
     "typecheck": "bunx tsc --noEmit",
-    "build": "bun build ./index.ts --outdir ./dist --target node",
+    "build": "tsc --outDir dist",
+    "publish": "npm run test && npm run build && npm publish",
+    "prepublishOnly": "bun run build",
     "example": "bun run examples/basic-usage.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^20.0.0"
   },
   "peerDependencies": {
     "typescript": "^5"
