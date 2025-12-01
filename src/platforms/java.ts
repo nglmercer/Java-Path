@@ -59,7 +59,7 @@ const ADOPTIUM_ARCH_MAP: Record<string, string | undefined> = {
  */
 export const getJavaInfoByVersion = (
   javaVersion: string | number,
-): JavaInfo | null => {
+) => {
   const versionStr = String(javaVersion ?? "");
 
   // --- Caso Especial: Termux ---

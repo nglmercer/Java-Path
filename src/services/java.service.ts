@@ -92,7 +92,7 @@ export interface JavaInfoStandard {
 */
 const _getJavaInfoByVersion = async (
   javaVersion: string | number,
-): Promise<JavaInfo> => {
+) => {
   const versionStr = String(javaVersion ?? "");
   if (!versionStr) {
     throw new Error("La versión de Java no puede estar vacía.");
@@ -273,6 +273,7 @@ export const JavaInfoService = {
   downloadJavaRelease: asyncHandler(_downloadJavaRelease),
   filter: asyncHandler(filterReleases),
   decompressJavaRelease: asyncHandler(_decompressJavaRelease),
+  getInstallationsByPath: asyncHandler(_getInstallationsByPath)
 };
 // --- API Pública Exportada ---
 
