@@ -2,7 +2,7 @@ import * as path from "path";
 import { existsSync, readdirSync } from "fs";
 import { env } from "./env.js"; // Importamos el objeto env que contiene todo
 import { isPackageInstalled } from "../utils/commands.js";
-
+import { defaultPaths } from "../config.js";
 // ─────────────────────────────────────────────────────────────
 // Interfaces de Salida
 // ─────────────────────────────────────────────────────────────
@@ -96,8 +96,8 @@ export const getJavaInfoByVersion = (
   const resultURL = `https://api.adoptium.net/v3/binary/latest/${versionStr}/ga/${platform.name}/${arch}/jdk/hotspot/normal/eclipse?project=jdk`;
   const filename = `Java-${versionStr}-${arch}${platform.ext}`;
 
-  const relativeDownloadPath = path.join("./binaries/java", filename);
-  const relativeUnpackPath = path.join("./binaries/java", `jdk-${versionStr}`); // Nombre de carpeta más genérico
+  const relativeDownloadPath = path.join(defaultPaths.backupPath, filename);
+  const relativeUnpackPath = path.join(defaultPaths.unpackPath, `jdk-${versionStr}`); // Nombre de carpeta más genérico
 
   const absoluteDownloadPath = path.resolve(relativeDownloadPath);
   const absoluteUnpackPath = path.resolve(relativeUnpackPath);

@@ -12,6 +12,7 @@ import type {
   TaskOperation,
   ITask,
 } from "../services/taskInstance.js";
+
 //export type OnCompleteCallback<T> = (result: T, task: ITask) => void;
 
 import {
@@ -64,8 +65,6 @@ function adoptiumNames() {
   }
   return { os: osName, arch: archName };
 }
-// --- Lógica Interna Asíncrona ---
-const defaultPathBIN = "./binaries/java";
 /*
 
 export interface JavaInfoTermux {
@@ -129,8 +128,8 @@ const _getJavaInfoByVersion = async (
   const resultURL = `https://api.adoptium.net/v3/binary/latest/${versionStr}/ga/${env.platform.name}/${arch}/jdk/hotspot/normal/eclipse?project=jdk`;
   const filename = `Java-${versionStr}-${arch}${env.platform.ext}`;
 
-  const relativeDownloadPath = path.join(defaultPathBIN, filename);
-  const relativeUnpackPath = path.join(defaultPathBIN, `jdk-${versionStr}`);
+  const relativeDownloadPath = path.join(defaultPaths.downloadPath, filename);
+  const relativeUnpackPath = path.join(defaultPaths.backupPath, `jdk-${versionStr}`);
   const absoluteDownloadPath = path.resolve(relativeDownloadPath);
   const absoluteUnpackPath = path.resolve(relativeUnpackPath);
 

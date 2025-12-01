@@ -6,6 +6,7 @@ import {
   FileUtils,
   CommandUtils,
 } from "../index.js";
+import { defaultPaths } from "../src/config.js";
 
 async function main() {
   console.log("=== Java-Path Library Demo ===\n");
@@ -45,7 +46,7 @@ async function main() {
   // 3. Scan for Java Installations
   console.log("3. Scanning for Java Installations:");
   try {
-    const installations = await scanJavaInstallations("./binaries/java");
+    const installations = await scanJavaInstallations(defaultPaths.unpackPath);
     console.log(`Found ${installations.length} Java installations:`);
 
     for (const installation of installations) {

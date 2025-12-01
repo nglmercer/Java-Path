@@ -500,6 +500,7 @@ import {
   FileUtils,
   CommandUtils
 } from "./index.js";
+import { defaultPaths } from "./src/config.js";
 
 // Environment Detection
 console.log(`Platform: ${env.platform.name} (${env.platform.ext})`);
@@ -512,7 +513,7 @@ if (javaInfo) {
 }
 
 // Scan for Java Installations
-const installations = await scanJavaInstallations("./binaries/java");
+const installations = await scanJavaInstallations(defaultPaths.unpackPath);
 console.log("Found Java installations:", installations);
 
 // File Operations
@@ -553,6 +554,7 @@ console.log(`Architecture: ${arch}`);
 
 ```typescript
 import { getJavaInfoByVersion, scanJavaInstallations } from "./index.js";
+import { defaultPaths } from "../src/config.js";
 
 // Get information for a specific Java version
 const javaInfo = getJavaInfoByVersion("17");
@@ -561,7 +563,7 @@ if (javaInfo) {
 }
 
 // Scan for Java installations
-const installations = await scanJavaInstallations("./binaries/java");
+const installations = await scanJavaInstallations(defaultPaths.unpackPath);
 console.log("Found Java installations:", installations);
 ```
 
@@ -620,7 +622,6 @@ Java-Path/
 │       ├── folder.ts      # Folder operation utilities
 │       └── validator.ts   # Response validation utilities
 ├── tests/                 # Test files
-├── binaries/              # Directory for Java binaries
 ├── index.ts               # Main entry point with re-exports
 └── README.md              # This file
 ```

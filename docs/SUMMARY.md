@@ -17,7 +17,6 @@ Java-Path/
 ├── examples/              # Example usage scripts
 ├── demo/                 # Demo project
 ├── docs/                 # Documentation
-├── binaries/              # Directory for Java binaries
 ├── index.ts               # Main entry point with re-exports
 ├── package.json           # Package configuration
 └── README.md              # Project documentation
@@ -74,6 +73,7 @@ import {
   FileUtils,
   CommandUtils
 } from "./index.js";
+import { defaultPaths } from "../src/config.js";
 
 // Environment Detection
 console.log(`Platform: ${env.platform.name} (${env.platform.ext})`);
@@ -86,7 +86,7 @@ if (javaInfo) {
 }
 
 // Scan for Java Installations
-const installations = await scanJavaInstallations("./binaries/java");
+const installations = await scanJavaInstallations(defaultPaths.unpackPath);
 console.log("Found Java installations:", installations);
 ```
 
