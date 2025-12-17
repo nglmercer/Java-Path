@@ -14,6 +14,7 @@ import {
   type GetFolderOptions,
 } from "../../src/utils/folder.js";
 import { FileUtils } from "../../src/utils/file.js";
+import fs from "node:fs/promises";
 import { env } from "../../src/platforms/env.js";
 
 describe("Folder utilities", () => {
@@ -34,26 +35,21 @@ describe("Folder utilities", () => {
     await Bun.$`mkdir -p ${subDir2}`;
 
     // Create test files
-    await FileUtils.writeFile(testDir, "", "file1.txt", "content1");
-    await FileUtils.writeFile(testDir, "", "file2.json", '{"key": "value"}');
-    await FileUtils.writeFile(testDir, "", "file3.jpg", "fake image content");
-    await FileUtils.writeFile(
-      testDir,
-      "subdir1",
-      "subfile1.txt",
-      "sub content1",
+    await fs.writeFile(join(testDir, "file1.txt"), "content1");
+    await fs.writeFile(join(testDir, "file2.json"), '{"key": "value"}');
+    await fs.writeFile(join(testDir, "file3.jpg"), "fake image content");
+
+    await fs.writeFile(
+        join(testDir, "subdir1", "subfile1.txt"),
+        "sub content1"
     );
-    await FileUtils.writeFile(
-      testDir,
-      "subdir1",
-      "subfile2.js",
-      "console.log('test');",
+    await fs.writeFile(
+        join(testDir, "subdir1", "subfile2.js"),
+        "console.log('test');"
     );
-    await FileUtils.writeFile(
-      testDir,
-      "subdir2",
-      "subfile3.txt",
-      "sub content2",
+    await fs.writeFile(
+        join(testDir, "subdir2", "subfile3.txt"),
+        "sub content2"
     );
   });
 
@@ -164,8 +160,8 @@ describe("Folder utilities", () => {
 
   it("should filter files by size", async () => {
     // Create a small file and a large file
-    await FileUtils.writeFile(testDir, "", "small.txt", "x");
-    await FileUtils.writeFile(testDir, "", "large.txt", "x".repeat(1000));
+    await fs.writeFile(join(testDir, "small.txt"), "x");
+    await fs.writeFile(join(testDir, "large.txt"), "x".repeat(1000));
 
     const options: GetFolderOptions = {
       minSize: 5,
@@ -328,9 +324,9 @@ describe("Folder utilities", () => {
 
   it("should sort results by size", async () => {
     // Create files with different sizes
-    await FileUtils.writeFile(testDir, "", "small.txt", "x");
-    await FileUtils.writeFile(testDir, "", "medium.txt", "x".repeat(10));
-    await FileUtils.writeFile(testDir, "", "large.txt", "x".repeat(100));
+    await fs.writeFile(join(testDir, "small.txt"), "x");
+    await fs.writeFile(join(testDir, "medium.txt"), "x".repeat(10));
+    await fs.writeFile(join(testDir, "large.txt"), "x".repeat(100));
 
     const options: GetFolderOptions = {
       sortBy: "size",
@@ -384,16 +380,12 @@ describe("Folder utilities", () => {
     await Bun.$`mkdir -p ${nestedDir1}`;
     await Bun.$`mkdir -p ${nestedDir2}`;
 
-    await FileUtils.writeFile(
-      testDir,
-      "subdir1/nested1",
-      "nested1.txt",
+    await fs.writeFile(
+      join(testDir, "subdir1/nested1/nested1.txt"),
       "nested content 1",
     );
-    await FileUtils.writeFile(
-      testDir,
-      "subdir1/nested1/nested2",
-      "nested2.txt",
+    await fs.writeFile(
+      join(testDir, "subdir1/nested1/nested2/nested2.txt"),
       "nested content 2",
     );
 

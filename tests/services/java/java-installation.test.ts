@@ -11,6 +11,7 @@ import {
   findJavaVersion,
 } from "../../../src/services/installations.js";
 import { FileUtils } from "../../../src/utils/file.js";
+import fs from "node:fs/promises";
 import { env } from "../../../src/platforms/env.js";
 import { defaultPaths } from "../../../src/config.js";
 
@@ -81,10 +82,8 @@ describe("Java Installation Service", () => {
 
         // Create the java executable
         const javaPath = join(binPath, env.isWindows() ? "java.exe" : "java");
-        await FileUtils.writeFile(
-          testDir,
-          "",
-          dir + "/bin/" + (env.isWindows() ? "java.exe" : "java"),
+        await fs.writeFile(
+          javaPath,
           "fake java executable",
         );
       }
@@ -128,10 +127,8 @@ describe("Java Installation Service", () => {
         await Bun.$`mkdir -p ${binPath}`;
 
         const javaPath = join(binPath, env.isWindows() ? "java.exe" : "java");
-        await FileUtils.writeFile(
-          testDir,
-          "",
-          `jdk-${version}.0.0/bin/${env.isWindows() ? "java.exe" : "java"}`,
+        await fs.writeFile(
+          javaPath,
           "fake java executable",
         );
       }
@@ -163,10 +160,8 @@ describe("Java Installation Service", () => {
         await Bun.$`mkdir -p ${binPath}`;
 
         const javaPath = join(binPath, env.isWindows() ? "java.exe" : "java");
-        await FileUtils.writeFile(
-          testDir,
-          "",
-          `${folderName}/bin/${env.isWindows() ? "java.exe" : "java"}`,
+        await fs.writeFile(
+          javaPath,
           "fake java executable",
         );
       }
@@ -216,10 +211,9 @@ describe("Java Installation Service", () => {
       // Create a mock zip file for testing
       const fileName = "test-java-mock.zip";
       const testFilePath = join(defaultPaths.downloadPath, fileName);
-      await FileUtils.writeFile(
-        defaultPaths.downloadPath,
-        "",
-        fileName,
+      await fs.mkdir(defaultPaths.downloadPath, { recursive: true });
+      await fs.writeFile(
+        testFilePath,
         "fake java zip content",
       );
 
@@ -245,10 +239,9 @@ describe("Java Installation Service", () => {
       const testFileName = "test-progress.txt";
       const testContent = "test content for progress tracking";
 
-      await FileUtils.writeFile(
-        defaultPaths.downloadPath,
-        "",
-        testFileName,
+      await fs.mkdir(defaultPaths.downloadPath, { recursive: true });
+      await fs.writeFile(
+        join(defaultPaths.downloadPath, testFileName),
         testContent,
       );
 
@@ -322,17 +315,16 @@ describe("Java Installation Service", () => {
         // Create tasks for multiple versions
         const taskPromises = versions.available.slice(0, 3).map((version) => {
           return JavaInfoService.filter(versions.releases, version || 0).then(
-            (filterResult) => {
+            async (filterResult) => {
               if (filterResult.success && filterResult.data) {
                 const release = filterResult.data;
                 const fileName = `test-java-${release.featureVersion}.zip`;
 
                 // Create a mock file instead of downloading
                 const testFilePath = join(defaultPaths.downloadPath, fileName);
-                return FileUtils.writeFile(
-                  defaultPaths.downloadPath,
-                  "",
-                  fileName,
+                await fs.mkdir(defaultPaths.downloadPath, { recursive: true });
+                return fs.writeFile(
+                  testFilePath,
                   "mock content",
                 ).then(() => ({ release, fileName }));
               }

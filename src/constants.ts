@@ -76,4 +76,5 @@ export const ALLOWED_FILE_EXTENSIONS = [
   ".png",
   ".jar",
   ".gz",
+  ".zip",
 ];

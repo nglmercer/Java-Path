@@ -45,7 +45,7 @@ describe("Command Utilities", () => {
       it("should return boolean for 'git' (common package)", () => {
          const result = isPackageInstalled("git");
          expect(typeof result).toBe("boolean");
-      });
+      }, 30000);
     });
 
     describe("runSync", () => {
@@ -118,11 +118,12 @@ describe("Command Utilities", () => {
     });
     
     describe("isPackageInstalled", () => {
+        // on Windows this can be very slow if it tries to run winget
         it("should check package", async () => {
             const result = await CommandUtils.isPackageInstalled("git");
             expect(result.success).toBe(true);
             expect(typeof result.data).toBe("boolean");
-        });
+        }, 30000);
     });
   });
 
