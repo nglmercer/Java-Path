@@ -1,7 +1,6 @@
 import {
   TaskManager,
   type TaskEvents,
-  type AssetManagerOptions,
 } from "node-task-manager";
 import { defaultPaths } from "../config.js";
 
@@ -22,6 +21,7 @@ function recreateTaskManager() {
 
   // Re-attach event listeners
   attachEventListeners();
+  return {taskManager};
 }
 
 // Function to attach event listeners
@@ -43,6 +43,7 @@ function attachEventListeners() {
       }
     });
   });
+  return {taskManager,TaskEventsNames};
 }
 
 // Attach initial event listeners

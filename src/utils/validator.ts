@@ -2,8 +2,8 @@
  * Define la estructura de respuesta estándar para todas las operaciones.
  * Es una unión discriminada para un manejo de tipos seguro.
  */
-type ServiceResponse<T> =
-  | { success: true; data: T; [key: string]: any }
+export type ServiceResponse<T> =
+  | { success: true; data: T }
   | { success: false; error: string; data: T };
 
 /**
@@ -19,10 +19,10 @@ const createSuccessResponse = <T>(data: T): ServiceResponse<T> => ({
  * Crea una respuesta de error estandarizada.
  * @param error - El mensaje de error.
  */
-const createErrorResponse = (
+const createErrorResponse = <T = unknown>(
   error: string,
-  data: any = false,
-): ServiceResponse<any> => ({
+  data: T = false as unknown as T,
+): ServiceResponse<T> => ({
   success: false,
   data,
   error,

@@ -1,7 +1,6 @@
 // src/services/java-info.service.ts
 import path from "node:path";
 import { env } from "../platforms/env.js";
-import type { JavaInfo } from "../platforms/java.js";
 import { CommandUtils } from "../utils/commands.js";
 import { defaultPaths } from "../config.js";
 import { taskManager } from "../services/taskInstance.js";
@@ -10,16 +9,7 @@ import { findJavaVersion, scanJavaInstallations, type InstalledJavaVersion } fro
 import type {
   DownloadResult,
   TaskOperation,
-  ITask,
 } from "../services/taskInstance.js";
-
-//export type OnCompleteCallback<T> = (result: T, task: ITask) => void;
-
-import {
-  createSuccessResponse,
-  createErrorResponse,
-  isSuccess,
-} from "../utils/validator.js";
 // ------------------------------------------------------------------
 // 1.  Types returned to the caller
 // ------------------------------------------------------------------
@@ -136,7 +126,6 @@ const _getJavaInfoByVersion = async (
 
   // --- Lógica mejorada para encontrar el 'bin' usando FileUtils ---
   let javaBinPath = path.join(absoluteUnpackPath, "bin");
-  const unpackPathExists = await FileUtils.pathExists(absoluteUnpackPath);
 
   return {
     isTermux: false,
@@ -234,7 +223,7 @@ async function filterReleases(
 async function _downloadJavaRelease(
   release: JavaRelease,
   fileName?: string,
-  onComplete?: (data: DownloadResult) => any,
+  onComplete?: (data: DownloadResult) => void,
 ): Promise<TaskOperation<DownloadResult>> {
   const response = await fetch(release.downloadUrl);
   if (!response.ok) {
@@ -279,7 +268,7 @@ async function _downloadJavaRelease(
 async function _decompressJavaRelease(
   filePath: string,
   unpackPath?: string,
-): Promise<any> {
+) {
   const { promise } = taskManager.unpack(filePath, {
     destination: unpackPath,
   });
@@ -291,7 +280,7 @@ async function _getInstallationsByPath(): Promise<InstalledJavaVersion[]> {
   return await scanJavaInstallations(defaultJavaPath);
 }
 export const JavaInfoService = {
-  getInstallableVersions: asyncHandler<JavaVersionsInfo, any>(
+  getInstallableVersions: asyncHandler(
     _getJavaInstallableVersions,
   ),
   getJavaInfo: asyncHandler(_getJavaInfoByVersion),
@@ -300,13 +289,4 @@ export const JavaInfoService = {
   decompressJavaRelease: asyncHandler(_decompressJavaRelease),
   getInstallationsByPath: asyncHandler(_getInstallationsByPath)
 };
-// --- API Pública Exportada ---
-
-/**
- * Obtiene de forma asíncrona la información necesaria para descargar o verificar una versión de Java.
- * Devuelve un objeto ServiceResponse que contiene JavaInfo en caso de éxito.
- *
- * @param javaVersion La versión de Java a buscar (ej. 8, 11, 17).
- * @returns Una Promesa que resuelve a un objeto `ServiceResponse<JavaInfo>`.
- */
 export const getJavaInfo = asyncHandler(_getJavaInfoByVersion);

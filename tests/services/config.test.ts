@@ -29,9 +29,9 @@ describe("Path Configuration", () => {
   });
 
   it("should update paths correctly", () => {
-    const newDownloadPath = join(testDir, "custom-downloads");
-    const newUnpackPath = join(testDir, "custom-unpacked");
-    const newBackupPath = join(testDir, "custom-backups");
+    const newDownloadPath = join(testDir, "custom/downloads");
+    const newUnpackPath = join(testDir, "custom/unpacked");
+    const newBackupPath = join(testDir, "custom/backups");
 
     defaultPaths.update({
       downloadPath: newDownloadPath,
@@ -45,7 +45,7 @@ describe("Path Configuration", () => {
   });
 
   it("should update only specified paths", () => {
-    const newDownloadPath = join(testDir, "custom-downloads");
+    const newDownloadPath = join(testDir, "custom/downloads");
     const originalUnpackPath = defaultPaths.unpackPath;
     const originalBackupPath = defaultPaths.backupPath;
 
@@ -65,9 +65,9 @@ describe("Path Configuration", () => {
 
     // Update paths
     defaultPaths.update({
-      downloadPath: join(testDir, "custom-downloads"),
-      unpackPath: join(testDir, "custom-unpacked"),
-      backupPath: join(testDir, "custom-backups"),
+      downloadPath: join(testDir, "custom/downloads"),
+      unpackPath: join(testDir, "custom/unpacked"),
+      backupPath: join(testDir, "custom/backups"),
     });
 
     // Verify paths changed

@@ -36,5 +36,4 @@ tests/temp/*
 temp/*
 custom-backups/*
 custom-unpack/*
-temp-test-source/*
 bun.lock

@@ -486,26 +486,16 @@ bun test tests/utils/validator.test.ts
 
 ## Project Structure
 
-```
-Java-Path/
-├── src/
-│   ├── platforms/
-│   │   ├── env.ts         # Environment detection utilities
-│   │   └── java.ts        # Java-specific platform utilities (sync)
-│   ├── services/
-│   │   ├── installations.ts # Java installation scanning
-│   │   ├── java.service.ts  # Main Java operations service (async)
-│   │   └── taskInstance.ts  # Task management logic
-│   ├── utils/
-│   │   ├── commands.ts    # Command execution utilities
-│   │   ├── file.ts        # File operation utilities
-│   │   ├── folder.ts      # Folder operation utilities
-│   │   └── validator.ts   # Response validation utilities
-│   └── config.ts          # Configuration (default paths)
-├── tests/                 # Test files
-├── examples/              # Usage examples
-├── index.ts               # Main entry point
-└── README.md              # This file
+```mermaid
+graph TD
+    Root[Java-Path] --> src
+    src --> platforms
+    src --> services
+    src --> utils
+    platforms --> env.ts
+    platforms --> java.ts
+    services --> installations.ts
+    utils --> commands.ts
 ```
 
 ## License

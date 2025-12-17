@@ -5,6 +5,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
   isSuccess,
+  type ServiceResponse,
 } from "./validator.js";
 // --- Constantes ---
 export const ALLOWED_EXTENSIONS = [
@@ -39,16 +40,14 @@ export const ALLOWED_EXTENSIONS = [
  * Define la estructura de respuesta estándar para todas las operaciones.
  * Es una unión discriminada para un manejo de tipos seguro.
  */
-export type ServiceResponse<T> =
-  | { success: true; data: T; [key: string]: any }
-  | { success: false; error: string; data: T };
+
 
 /**
  * Wrapper para funciones asíncronas que estandariza el manejo de errores y la respuesta.
  * @param fn La función asíncrona a ejecutar.
  * @returns Una nueva función que devuelve un objeto ServiceResponse.
  */
-export function asyncHandler<T, A extends any[]>(
+export function asyncHandler<T, A extends unknown[]>(
   fn: (...args: A) => Promise<T>,
 ): (...args: A) => Promise<ServiceResponse<T>> {
   return async (...args: A): Promise<ServiceResponse<T>> => {

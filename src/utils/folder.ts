@@ -459,14 +459,7 @@ const getDirectorySummary = async (
     includeFileTypes?: boolean;
     processSubdirectories?: boolean; // NUEVO: controla si procesa recursivamente
   } = {},
-): Promise<{
-  totalFiles: number;
-  totalDirectories: number;
-  totalSize: number;
-  totalSizeFormatted: string;
-  fileTypes?: Record<string, number>;
-  isRecursive: boolean; // Indica si los números incluyen subdirectorios
-}> => {
+) => {
   const {
     includeFileTypes = false,
     processSubdirectories = false, // Por defecto NO procesa subdirectorios
@@ -485,12 +478,13 @@ const getDirectorySummary = async (
 
   const totalSize = files.reduce((sum, file) => sum + file.size, 0);
 
-  const result: any = {
+  const result = {
     totalFiles: files.length,
     totalDirectories: directories.length,
     totalSize,
     totalSizeFormatted: formatFileSize(totalSize),
     isRecursive: processSubdirectories,
+    fileTypes: includeFileTypes ? {} : undefined,
   };
 
   // Solo calcular tipos de archivo si se solicita explícitamente
