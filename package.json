@@ -33,5 +33,6 @@
   },
   "dependencies": {
     "node-task-manager": "^2.1.5"
-  }
+  },
+  "license": "MIT"
 }
